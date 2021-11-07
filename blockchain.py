@@ -41,7 +41,7 @@ class Blockchain:
         Args:
             prev_proof (integer): mine function that was solved
         Returns:
-            new_proof    
+            the proof    
         """
         # start at 1
         new_proof = 1
@@ -63,3 +63,28 @@ class Blockchain:
         """
         encoded_block = json.dumps(block, sort_keys=True).encode()
         return sha256(encoded_block).hexdigest()
+    
+    def is_chain_valid(self, chain):
+        """Check if entire blockchain is valid
+
+        Args:
+            chain (list): the chain of blockchain
+        """
+        # start w/ first block
+        prev_block = chain[0]
+        block_index = 1
+        while block_index < len(chain):
+            # check previous hash of block = hash of previous block
+            block = chain[block_index]
+            if block['prev_hash'] != self.hash(prev_block):
+                return False
+            # check if current proof is valid
+            prev_proof = prev_block['proof']
+            proof = block['proof']
+            hash_operation = sha256(str(proof**2 - prev_proof**2)).encode().hexdigest()
+            if hash_operation[:4] != '0000':
+                return False
+            prev_block = block
+            block_index +=1
+        return True
+            
