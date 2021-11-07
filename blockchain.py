@@ -1,6 +1,6 @@
 import json
 import datetime
-import hashlib
+from hashlib import sha256
 from flask import Flask, jsonify
 
 
@@ -16,11 +16,50 @@ class Blockchain:
         """[summary]
 
         Args:
-            proof ([type]): [description]
-            prev_hash ([type]): [description]
+            proof (integer): the mine function that was solved
+            prev_hash (string): previous hash from previous block - links previous block to one just mined
         """
         block = {'index': len(self.chain) + 1,
                  'timestamp': str(datetime.datetime.now()),
                  'proof': proof,
                  'prev_hash': prev_hash}
+        self.chain.append(block)
+        return block
+    
+    def get_prev_block(self):
+        """
+        Returns:
+            previous block from blockchain
+        """
+        return self.chain[-1]
+    
+    def pow(self, prev_proof):
+        """Defines the problem to solve and solves the problem by trial & error
+        Proof of work principal: 'hard to find, easy to verify'
+        sha256 - 64 hexadecimal characters, regex: [A-Fa-f0-9]{64}
         
+        Args:
+            prev_proof (integer): mine function that was solved
+        Returns:
+            new_proof    
+        """
+        # start at 1
+        new_proof = 1
+        is_proof = False
+        while is_proof is False:
+            # make operation non-symmetrical 
+            hash_operation = sha256(str(new_proof**2 - prev_proof**2)).encode().hexdigest()
+            if hash_operation[:4] == '0000':
+                is_proof = True
+            else:
+                new_proof += 1
+        return new_proof
+    
+    def hash(self, block):
+        """Returns sha256 cryptographic hash of a block
+
+        Args:
+            block (dictionary): a block from the blockchain
+        """
+        encoded_block = json.dumps(block, sort_keys=True).encode()
+        return sha256(encoded_block).hexdigest()
