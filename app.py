@@ -9,7 +9,7 @@ blockchain = Blockchain()
 # create web app
 app = Flask(__name__)
 
-@app.routee('/mine_block', methods=['GET'])
+@app.route('/mine_block', methods=['GET'])
 def mine_block():
     prev_block = blockchain.get_prev_block()
     prev_proof = prev_block['proof']
@@ -23,3 +23,9 @@ def mine_block():
                 'prev_hash': block['prev_hash']}
     return jsonify(response), 200
  
+ 
+@app.route('/get_chain', methods=['GET'])
+def get_chain():
+    response = {'chain': blockchain.chain,
+                'chain_length': len(blockchain.chain)}
+    return jsonify(response), 200
