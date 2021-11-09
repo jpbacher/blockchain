@@ -48,7 +48,7 @@ class Blockchain:
         is_proof = False
         while is_proof is False:
             # make operation non-symmetrical 
-            hash_operation = sha256(str(new_proof**2 - prev_proof**2)).encode().hexdigest()
+            hash_operation = sha256(str(new_proof**2 - prev_proof**2).encode()).hexdigest()
             if hash_operation[:4] == '0000':
                 is_proof = True
             else:
