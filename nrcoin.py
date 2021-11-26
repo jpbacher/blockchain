@@ -54,7 +54,7 @@ class NRCoin:
         return new_block_index
     
     def add_node(self, address):
-        """Add the node to set of nodes
+        """Add the node's address to set of nodes
 
         Args:
             address (string): the url node address
@@ -120,3 +120,24 @@ class NRCoin:
             prev_block = block
             block_index +=1
         return True
+    
+    def replace_chain(self):
+        """
+        """
+        network = self.nodes
+        longest_chain = None
+        max_chain_length = len(self.chain)
+        for node in network:
+            # each node is the url + a different port
+            response = requests.get(f'http://{node}/get_chain')
+            if response.status_code != 200:
+                break
+            chain_length = response.json()['length']
+            chain = response.json()['chain']
+            if chain_length > max_chain_length and self.is_chain_valid(chain):
+                max_chain_length = chain_length
+                longest_chain = chain
+        # if chain was replaced
+        if longest_chain:
+            return True
+            
