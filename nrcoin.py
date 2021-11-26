@@ -138,5 +138,7 @@ class NRCoin:
                 longest_chain = chain
         # if chain was replaced
         if longest_chain:
+            self.chain = longest_chain
             return True
-            
+        # if no replacement was made (original chain was largest one)
+        return False
