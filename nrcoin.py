@@ -54,13 +54,13 @@ class NRCoin:
         return new_block_index
     
     def add_node(self, address):
-        """Add the node's address to set of nodes
+        """Add the node's address (a url and port) to set of nodes
 
         Args:
             address (string): the url node address
         """
         parsed_url = urlparse(address)
-        # add url and port w/ .netloc
+        # get url and port from parsed_url
         self.nodes.add(parsed_url.netloc)
     
     def get_prev_block(self):
@@ -128,7 +128,6 @@ class NRCoin:
         longest_chain = None
         max_chain_length = len(self.chain)
         for node in network:
-            # each node is the url + a different port
             response = requests.get(f'http://{node}/get_chain')
             if response.status_code != 200:
                 break
