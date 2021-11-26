@@ -17,7 +17,7 @@ class NRCoin:
         # genesis block
         self.create_block(proof=1, prev_hash='0')
         
-    def create_block(self, proof, prev_hash, transactions):
+    def create_block(self, proof, prev_hash):
         """Returns new block
 
         Args:
