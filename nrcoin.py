@@ -14,8 +14,9 @@ class NRCoin:
         self.chain = []
         # before integrated into a block
         self.transactions = []
-        # genesis block
+        # create genesis block
         self.create_block(proof=1, prev_hash='0')
+        self.nodes = set()
         
     def create_block(self, proof, prev_hash):
         """Returns new block
@@ -30,7 +31,7 @@ class NRCoin:
                  'proof': proof,
                  'prev_hash': prev_hash,
                  'transactions': self.transactions}
-        # cannot have duplicate transactions in different blocks
+        # reset transactions - cannot have duplicate transactions in different blocks
         self.transactions = []
         self.chain.append(block)
         return block
@@ -52,10 +53,18 @@ class NRCoin:
         new_block_index = previous_block['index'] + 1
         return new_block_index
     
-    def get_prev_block(self):
+    def add_node(self, address):
+        """Add the node to set of nodes
+
+        Args:
+            address (string): the url node address
         """
-        Returns:
-            previous block from blockchain
+        parsed_url = urlparse(address)
+        # add url and port w/ .netloc
+        self.nodes.add(parsed_url.netloc)
+    
+    def get_prev_block(self):
+        """Returns previous block from blockchain
         """
         return self.chain[-1]
     
@@ -65,9 +74,7 @@ class NRCoin:
         sha256 - 64 hexadecimal characters, regex: [A-Fa-f0-9]{64}
         
         Args:
-            prev_proof (integer): mine function that was solved
-        Returns:
-            the proof    
+            prev_proof (integer): mine function that was solved  
         """
         # start at 1
         new_proof = 1
