@@ -1,8 +1,6 @@
 from flask import Flask, jsonify
 from uuid import uuid4
-from flask.typing import ResponseReturnValue
-
-from werkzeug.wrappers import response
+import requests
 
 from nrcoin import NRCoin
 
@@ -47,3 +45,17 @@ def is_valid():
     else:
         response = {'message': 'Blockchain is invalid'}
     return jsonify(response), 200
+
+
+@app.route('/add_transaction', methods=['POST'])
+def add_transaction():
+    json_file = requests.get_json()
+    transaction_keys = ['sender', 'receiver', 'amount']
+    if not all (key in json_file for key in transaction_keys):
+        return 'Some elements of the transaction are missing', 400
+    # get index of next block to put this transaction
+    block_index = nrcoin.add_transaction(
+        json_file['sender'], json_file['receiver'], json_file['amount']
+    )
+    response = {'message': f'Transaction added to block {block_index}'}
+    return jsonify(response), 201
