@@ -1,5 +1,8 @@
 from flask import Flask, jsonify
 from uuid import uuid4
+from flask.typing import ResponseReturnValue
+
+from werkzeug.wrappers import response
 
 from nrcoin import NRCoin
 
@@ -38,4 +41,9 @@ def get_chain():
 
 @app.route('/is_valid', methods=['GET'])
 def is_valid():
-    
+    is_valid = nrcoin.is_chain_valid(nrcoin.chain)
+    if is_valid:
+        response = {'message': 'Blockchain is valid'}
+    else:
+        response = {'message': 'Blockchain is invalid'}
+    return jsonify(response), 200
