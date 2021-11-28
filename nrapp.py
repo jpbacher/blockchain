@@ -1,6 +1,7 @@
 from flask import Flask, jsonify
 from uuid import uuid4
 import requests
+from werkzeug.wrappers import response
 
 from nrcoin import NRCoin
 
@@ -58,4 +59,17 @@ def add_transaction():
         json_file['sender'], json_file['receiver'], json_file['amount']
     )
     response = {'message': f'Transaction added to block {block_index}'}
+    return jsonify(response), 201
+
+# connect new nodes
+@app.route('/connect_node', methods=['POST'])
+def connect_node():
+    json_file = requests.get_json()
+    node_addresses = json_file.get('nodes')
+    if node_addresses is None:
+        return 'There is not a node', 400
+    for node in node_addresses:
+        nrcoin.add_node(node)
+    response = {'message': 'All nodes connected - NRCoin blockchain contains: ',
+                'total_nodes': list(nrcoin.nodes)}
     return jsonify(response), 201
