@@ -58,7 +58,7 @@ def add_transaction():
     block_index = nrcoin.add_transaction(
         json_file['sender'], json_file['receiver'], json_file['amount']
     )
-    response = {'message': f'Transaction added to block {block_index}'}
+    response = {'message': f'Transaction added to block - {block_index}'}
     return jsonify(response), 201
 
 # connect new nodes
@@ -70,6 +70,6 @@ def connect_node():
         return 'There is not a node', 400
     for node in node_addresses:
         nrcoin.add_node(node)
-    response = {'message': 'All nodes connected - NRCoin blockchain contains: ',
+    response = {'message': 'All nodes connected - NRCoin blockchain contains ---> ',
                 'total_nodes': list(nrcoin.nodes)}
     return jsonify(response), 201
